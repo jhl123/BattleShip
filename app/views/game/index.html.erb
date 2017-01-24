@@ -1,2 +1,9 @@
-<h1>Game#index</h1>
-<p>Find me in app/views/game/index.html.erb</p>
+<div><b><%= @user.username %></b> playing </div>
+
+<% if !@game.has_started? %>
+<div>Waiting for player 2...</div>
+
+<% else %>
+
+<div>You are playing against </div>
+<% end %>
