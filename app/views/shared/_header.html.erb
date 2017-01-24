@@ -1,0 +1,12 @@
+<div id="header-bar">
+  <%= link_to root_path do %>
+  <% end %>
+
+  <div id="user-login-bar">
+    <%= form_tag(root_path, :method => "get", id: "user-login-form") do %>
+        <%= text_field_tag :username, params[:username], placeholder: "Enter new username", class: "user-login-box" %>
+        <%= submit_tag "Login", :name => nil, class: "user-login-button" %>
+    <% end %>
+  </div>
+
+</div>

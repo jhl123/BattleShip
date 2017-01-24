@@ -1,0 +1,9 @@
+<h1>Welcome to Battleship 2.0</h1>
+
+<div>for user: <%= @user.username %></div>
+
+  <div id="new-game">
+    <%= form_tag(game_path, :method => "get", id: "new-game-form") do %>
+        <%= submit_tag "Begin new match", :name => nil, class: "begin-match-button" %>
+    <% end %>
+  </div>
