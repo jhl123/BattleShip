@@ -9,9 +9,17 @@ class Board < ActiveRecord::Base
     if !game.has_started
       raise "Game hasn't started yet"
     end
-   
-    board_array = self.create_board(game.id, game.user_1_id)
-    board_array_2 = self.create_board(game.id, game.user_2_id)
+    
+
+    board_cache = Rails.cache.fetch('board_cache')
+    if board_cache.nil?
+      board_cache = Hash.new
+    end
+
+    board_cache[game.id] = Hash.new
+    board_cache[game.id][game.user_1_id] = self.create_board(game.id, game.user_1_id)
+    board_cache[game.id][game.user_2_id] = self.create_board(game.id, game.user_2_id)
+    Rails.cache.write('board_cache', board_cache)
   end
 
   private

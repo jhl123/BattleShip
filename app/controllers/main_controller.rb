@@ -1,6 +1,12 @@
 class MainController < ApplicationController
   def index
-    session[:username] = params["username"].nil? ? "guest" : params["username"]
+
+    if !params["username"].nil?
+      session[:username] = params["username"]
+    elsif session[:username].nil?
+      session[:username] = "guest" 
+    end
+
     @user = User.where(username: session[:username]).take
     if @user.nil?
       @user = User.create(username: session[:username])

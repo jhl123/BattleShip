@@ -1,9 +1,55 @@
+<%= javascript_include_tag "game" %>
+
+
 <div><b><%= @user.username %></b> playing </div>
 
 <% if !@game.has_started? %>
-<div>Waiting for player 2...</div>
+  <div>Waiting for player 2...</div>
 
 <% else %>
 
-<div>You are playing against </div>
+  <div>You are playing against <b><%= @opponent_user.username%></b></div>
+
+  <% if @game.next_turn_user_id == @user.id %>
+    It is currently your turn, please select a location to launch missle.
+
+  <% else %>
+    Waiting for opponent to fire missle...
+
+  <% end %>
+
+  <br />
+
+
+  <% @player_board.each do |rows| %>
+    <% rows.each do |tile| %>
+      <%= tile.ship_id.nil? ? '-' : tile.ship_id %>
+    <% end %>
+    <br />
+  <% end %>
+
+  Opponent's board
+  <br />
+  <% @opponent_board.each do |rows| %>
+    <% rows.each do |tile| %>
+      <% if tile.is_bombed %>
+        <%= tile.ship_id.nil? ? 'O' : 'X' %>
+      <% else %>
+        -
+      <% end %>
+      
+    <% end %>
+    <br />
+  <% end %>
+
+
+
+<% end %>
+
+<%= javascript_tag do %>
+<% if @game.next_turn_user_id.nil? || @game.next_turn_user_id != @user.id %>
+  setTimeout(function(){
+    location.reload();
+  }, 5000);
+<% end %>
 <% end %>
