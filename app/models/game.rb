@@ -18,4 +18,9 @@ class Game < ActiveRecord::Base
   def is_players_turn?(user)
     return self.has_started && self.next_turn_user_id == user.id
   end
+
+  def switch_to_next_players_turn
+    self.next_turn_user_id = self.next_turn_user_id == user_1_id ? user_2_id : user_1_id
+    self.save
+  end
 end

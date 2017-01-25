@@ -1,7 +1,23 @@
 class Board < ActiveRecord::Base
+  belongs_to :game
 
   MAX_ROWS = 10
   MAX_COLUMNS = 10
+
+  def mark_as_bombed
+    self.is_bombed = true
+    self.time_bombed = DateTime.now
+    self.save
+
+    board_cache = Rails.cache.fetch('board_cache')
+    board_cache[self.game_id][self.user_id][self.x][self.y] = self
+    Rails.cache.write('board_cache', board_cache)
+  end
+
+  def ship_exists?
+    return !self.ship_id.nil?
+  end
+
   def self.create_new_boards(game)
     if game.user_1_id.nil? || game.user_2_id.nil?
       raise "Game does not have both users ready"

@@ -35,8 +35,13 @@
       <% if tile.is_bombed %>
         <%= tile.ship_id.nil? ? 'O' : 'X' %>
       <% else %>
-        <%= form_tag(game_fire_missile_path(:tile_id => tile.id, :game_id => @game.id), :method => "post") do %>
-          <div onclick="$(this).parent().submit()">-</div>
+        <% if @game.is_players_turn?(@user) %>
+          <%= form_tag(game_fire_missile_path(:tile_id => tile.id), :method => "post") do %>
+            <div onclick="$(this).parent().submit()">-</div>
+          <% end %>
+
+        <% else %>
+          <div>-</div>
         <% end %>
       <% end %>
       
@@ -50,8 +55,8 @@
 
 <%= javascript_tag do %>
 <% if !@game.has_started? || !@game.is_players_turn?(@user) %>
-<!--   setTimeout(function(){
+  setTimeout(function(){
     location.reload();
-  }, 5000); -->
+  }, 5000);
 <% end %>
 <% end %>

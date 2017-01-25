@@ -27,8 +27,16 @@ class GameController < ApplicationController
   end
 
   def fire_missile
-    
-    redirect_to game_index_path(game_id: params[:game_id])
+    @user = User.where(username: session[:username]).take
+    tile = Board.find(params[:tile_id])
+    tile.mark_as_bombed
+
+    if !tile.ship_exists?
+      game = tile.game
+      game.switch_to_next_players_turn
+    end
+
+    redirect_to game_index_path(game_id: tile.game_id)
   end
 
 end
