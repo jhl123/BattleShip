@@ -10,7 +10,7 @@
 
   <div>You are playing against <b><%= @opponent_user.username%></b></div>
 
-  <% if @game.next_turn_user_id == @user.id %>
+  <% if @game.is_players_turn?(@user) %>
     It is currently your turn, please select a location to launch missle.
 
   <% else %>
@@ -35,7 +35,9 @@
       <% if tile.is_bombed %>
         <%= tile.ship_id.nil? ? 'O' : 'X' %>
       <% else %>
-        -
+        <%= form_tag(game_fire_missile_path(:tile_id => tile.id, :game_id => @game.id), :method => "post") do %>
+          <div onclick="$(this).parent().submit()">-</div>
+        <% end %>
       <% end %>
       
     <% end %>
@@ -47,9 +49,9 @@
 <% end %>
 
 <%= javascript_tag do %>
-<% if @game.next_turn_user_id.nil? || @game.next_turn_user_id != @user.id %>
-  setTimeout(function(){
+<% if !@game.has_started? || !@game.is_players_turn?(@user) %>
+<!--   setTimeout(function(){
     location.reload();
-  }, 5000);
+  }, 5000); -->
 <% end %>
 <% end %>

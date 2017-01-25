@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   get 'game/index'
+  post 'game/fire_missile'
   get 'main/index'
+
 
   root 'main#index'
   # The priority is based upon order of creation: first created -> highest priority.

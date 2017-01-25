@@ -1,6 +1,5 @@
 class GameController < ApplicationController
   def index
-
     @user = User.where(username: session[:username]).take
     if !params[:game_id].nil?
       @game = Game.find(params[:game_id])
@@ -27,8 +26,9 @@ class GameController < ApplicationController
     end
   end
 
-  def fire_missle
+  def fire_missile
     
+    redirect_to game_index_path(game_id: params[:game_id])
   end
 
 end
