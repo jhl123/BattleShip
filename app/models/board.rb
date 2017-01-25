@@ -38,6 +38,17 @@ class Board < ActiveRecord::Base
     Rails.cache.write('board_cache', board_cache)
   end
 
+  def self.load_game(game_id, user_id)
+    board = self.create_empty_board
+    board_tiles = Board.where(game_id: game_id, user_id: user_id)
+
+    board_tiles.each do |tile|
+      board[tile.x][tile.y] = tile
+    end
+
+    return board
+  end
+
   private
     def self.create_board(game_id, user_id)
       board_array = self.create_empty_board_pieces(game_id,user_id)
@@ -46,13 +57,17 @@ class Board < ActiveRecord::Base
     end
 
     def self.create_empty_board_pieces(game_id, user_id)
-      board_array = Array.new(MAX_ROWS){Array.new(MAX_COLUMNS)}
+      board_array = self.create_empty_board
       (0..MAX_ROWS - 1).each do |x|
         (0..MAX_COLUMNS - 1).each do |y|
           board_array[x][y] = Board.create(game_id: game_id, user_id: user_id, x: x, y: y)
         end
       end
       return board_array
+    end
+  
+    def self.create_empty_board
+      return Array.new(MAX_ROWS){Array.new(MAX_COLUMNS)}
     end
 
     def self.place_all_ships_to_board(board_array)

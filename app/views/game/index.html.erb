@@ -20,34 +20,65 @@
 
   <br />
 
-
-  <% @player_board.each do |rows| %>
-    <% rows.each do |tile| %>
-      <%= tile.ship_id.nil? ? '-' : tile.ship_id %>
-    <% end %>
-    <br />
-  <% end %>
-
+  <div class="game-board">
   Opponent's board
-  <br />
   <% @opponent_board.each do |rows| %>
+
+    <div class="tile-row">
     <% rows.each do |tile| %>
       <% if tile.is_bombed %>
-        <%= tile.ship_id.nil? ? 'O' : 'X' %>
+        <% if tile.ship_id.nil? %>
+          <div class="box water">
+            <div class="bombed water-bombed">O</div>
+          </div>
+        <% else %>
+          <div class="box opponent-hit">
+            <div class="bombed ship-bombed">X</div>
+          </div>
+        <% end %>
       <% else %>
         <% if @game.is_players_turn?(@user) %>
+          <div class="clickable-box">
           <%= form_tag(game_fire_missile_path(:tile_id => tile.id), :method => "post") do %>
-            <div onclick="$(this).parent().submit()">-</div>
+            <div class="box can-fire opponent-unknown" onclick="$(this).parent().submit()"></div>
           <% end %>
-
+          </div>
         <% else %>
-          <div>-</div>
+            <div class="box opponent-unknown" /></div>
         <% end %>
       <% end %>
-      
     <% end %>
-    <br />
+    </div>
   <% end %>
+
+  </div>
+
+
+  <div class="game-board">
+  Your board
+  <% @player_board.each do |rows| %>
+    <div class="tile-row">
+    <% rows.each do |tile| %>
+
+      <% if tile.ship_id.nil? %>
+        <div class="box water">
+          <% if tile.is_bombed %>
+            <div class="bombed water-bombed">O</div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="box player-ship-<%= tile.ship_id % @total_ships %>">
+          <% if tile.is_bombed %>
+            <div class="bombed ship-bombed">X</div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+    </div>
+  <% end %>
+
+  </div>
+  
 
 
 

@@ -1,4 +1,6 @@
 class GameController < ApplicationController
+  include ApplicationHelper
+
   def index
     @user = User.where(username: session[:username]).take
     if !params[:game_id].nil?
@@ -7,7 +9,6 @@ class GameController < ApplicationController
         @game.add_user(@user.id)
         @game.begin
         Board.create_new_boards(@game)
-        subtopic_counts = Rails.cache.fetch('board_cache')
       end
 
       if @game.has_started
@@ -16,10 +17,20 @@ class GameController < ApplicationController
           return
         end
 
+
+        board_cache = Rails.cache.fetch('board_cache')
+        if board_cache.nil?
+          board_cache = Hash.new
+        end
+
+        if board_cache[@game.id].nil? || board_cache[@game.id][@user.id].nil?
+          add_to_cache(board_cache, @game)
+        end
         @player_board = Rails.cache.fetch('board_cache')[@game.id][@user.id]
         opponent_id = @game.user_1_id != @user.id ? @game.user_1_id : @game.user_2_id
         @opponent_user = User.find(opponent_id)
         @opponent_board = Rails.cache.fetch('board_cache')[@game.id][opponent_id]
+        @total_ships = Ship.count
       end
     else
       @game = Game.create(user_1_id: @user.id)
