@@ -22,19 +22,13 @@ class GameController < ApplicationController
         return
       end
 
+      # Defined in ApplicationHelper
+      board_cache = get_cache(@game.id)
 
-      board_cache = Rails.cache.fetch('board_cache')
-      if board_cache.nil?
-        board_cache = Hash.new
-      end
-
-      if board_cache[@game.id].nil? || board_cache[@game.id][@user.id].nil?
-        add_to_cache(board_cache, @game)
-      end
-      @player_board = Rails.cache.fetch('board_cache')[@game.id][@user.id]
+      @player_board = board_cache[@game.id][@user.id]
       opponent_id = @game.user_1_id != @user.id ? @game.user_1_id : @game.user_2_id
       @opponent_user = User.find(opponent_id)
-      @opponent_board = Rails.cache.fetch('board_cache')[@game.id][opponent_id]
+      @opponent_board = board_cache[@game.id][opponent_id]
       @total_ships = Ship.count
     end
   end
@@ -43,9 +37,15 @@ class GameController < ApplicationController
     @user = User.where(username: session[:username]).take
     tile = Board.find(params[:tile_id])
     tile.mark_as_bombed
+    game = tile.game
 
-    if !tile.ship_exists?
-      game = tile.game
+    if tile.ship_exists?
+      
+      # Defined in ApplicationHelper
+      if is_game_complete?(tile)  
+        game.update_winner(@user)
+      end
+    else
       game.switch_to_next_players_turn
     end
 
