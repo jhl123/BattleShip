@@ -87,7 +87,8 @@
 <%= javascript_tag do %>
 <% if !@game.has_started? || !@game.is_players_turn?(@user) %>
   setTimeout(function(){
-    location.reload();
+    var url = "/game/index?game_id=<%= @game.id %>"
+    window.location.href = url;
   }, 5000);
 <% end %>
 <% end %>
