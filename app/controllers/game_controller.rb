@@ -10,6 +10,9 @@ class GameController < ApplicationController
     if !params[:sunk].nil?
       @sunk = params[:sunk] == "true"
     end
+
+
+    
     if params[:game_id].nil?
       @game = Game.create(user_1_id: @user.id)
       params[:game_id] = @game.id
@@ -30,13 +33,15 @@ class GameController < ApplicationController
       end
 
       # Defined in ApplicationHelper
-      game_cache = get_cache(@game.id)
+      game_cache = ApplicationController.helpers.get_cache(@game.id)
 
       @player_board = game_cache[@user.id]
-      opponent_id = @game.user_1_id != @user.id ? @game.user_1_id : @game.user_2_id
-      @opponent_user = User.find(opponent_id)
-      @opponent_board = game_cache[opponent_id]
+      @opponent_user = @game.get_opponent(@user.id)
+      @opponent_board = game_cache[@opponent_user.id]
       @total_ships = Ship.count
+      @last_move = Hash.new
+      @last_move[@user.id] = ApplicationController.helpers.get_last_move(@user.id)
+      @last_move[@opponent_user.id] = ApplicationController.helpers.get_last_move(@opponent_user.id)
     end
   end
 
@@ -58,6 +63,7 @@ class GameController < ApplicationController
       game.switch_to_next_players_turn
     end
 
+    ApplicationController.helpers.add_last_move_to_cache(@user.id, tile)
     redirect_to game_index_path(game_id: tile.game_id, hit: hit, sunk: sunk)
   end
 

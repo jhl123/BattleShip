@@ -1,5 +1,4 @@
 module ApplicationHelper
-
   
   def get_cache(game_id)
     game_cache = Rails.cache.fetch("game-#{game_id}")
@@ -24,6 +23,14 @@ module ApplicationHelper
     Rails.cache.write("game-#{board.game_id}", game_cache, :expires_in => 30.minutes)
   end
 
+  def add_last_move_to_cache(user_id, board)
+    Rails.cache.write("last-move-user-#{user_id}", board, :expires_in => 30.minutes)
+  end
+
+  def get_last_move(user_id)
+    puts "fetched..for: #{user_id}: #{Rails.cache.fetch("last-move-user-#{user_id}").id}"
+    return Rails.cache.fetch("last-move-user-#{user_id}")
+  end
   def is_game_complete?(board)
     game_cache = get_cache(board.game_id)
     board = game_cache[board.user_id]

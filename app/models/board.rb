@@ -10,8 +10,7 @@ class Board < ActiveRecord::Base
     self.time_bombed = DateTime.now
     self.save
 
-    #defined in ApplicationHelper
-    update_cache(self)
+    ApplicationController.helpers.update_cache(self)
   end
 
   def ship_exists?

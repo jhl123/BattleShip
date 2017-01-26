@@ -6,8 +6,8 @@
 
   
   <% if @game.is_over? %>
-    <div>Game Over</div>
-    <div><%= @user.id == @game.winner_id ? "You" : @game.winner.username %> won</div>
+    <div class="game-text">Game Over</div>
+    <div class="game-text"><%= @user.id == @game.winner_id ? "You" : @game.winner.username %> won!</div>
   
   <% else %> 
     <div class="game-info">
@@ -49,11 +49,11 @@
       <% if tile.is_bombed %>
         <% if tile.ship_id.nil? %>
           <div class="box water">
-            <div class="bombed water-bombed">O</div>
+            <div class="bombed water-bombed <%= get_most_recent_bomb_class(tile, @last_move[@user.id]) %>">O</div>
           </div>
         <% else %>
           <div class="box opponent-hit">
-            <div class="bombed ship-bombed">X</div>
+            <div class="bombed ship-bombed <%= get_most_recent_bomb_class(tile, @last_move[@user.id]) %>">X</div>
           </div>
         <% end %>
       <% else %>
@@ -83,13 +83,13 @@
       <% if tile.ship_id.nil? %>
         <div class="box water">
           <% if tile.is_bombed %>
-            <div class="bombed water-bombed">O</div>
+            <div class="bombed water-bombed <%= get_most_recent_bomb_class(tile, @last_move[@opponent_user.id]) %>">O</div>
           <% end %>
         </div>
       <% else %>
         <div class="box player-ship-<%= tile.ship_id % @total_ships %>">
           <% if tile.is_bombed %>
-            <div class="bombed ship-bombed">X</div>
+            <div class="bombed ship-bombed <%= get_most_recent_bomb_class(tile, @last_move[@opponent_user.id]) %>">X</div>
           <% end %>
         </div>
       <% end %>

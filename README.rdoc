@@ -20,4 +20,6 @@ To access the site, go to:
   http://localhost:3000/
 
 
-By default, you'll be logged in under username: "guest". To create a new username or login under an existing username, enter it in the box
+By default, you'll be logged in under username: "guest". To create a new username or login under an existing username, enter it in the box in the main page.
+
+To play against yourself on the same computer, use 2 different browsers or open an in-cognito tab on one browser
