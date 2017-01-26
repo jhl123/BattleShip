@@ -11,9 +11,6 @@ class Game < ActiveRecord::Base
   end
 
   def get_opponent(user_id)
-    puts "user_id: #{user_id}"
-    puts "self: #{self.inspect}"
-
     if user_id == self.user_1_id
       return self.user_2
     elsif user_id == self.user_2_id

@@ -3,8 +3,13 @@ class GameController < ApplicationController
 
   def index
     @user = User.where(username: session[:username]).take
-    @hit = params[:hit] == "true"
-    @sunk = params[:sunk] == "true"
+    if !params[:hit].nil?
+      @hit = params[:hit] == "true"
+    end
+    
+    if !params[:sunk].nil?
+      @sunk = params[:sunk] == "true"
+    end
     if params[:game_id].nil?
       @game = Game.create(user_1_id: @user.id)
       params[:game_id] = @game.id
@@ -25,12 +30,12 @@ class GameController < ApplicationController
       end
 
       # Defined in ApplicationHelper
-      board_cache = get_cache(@game.id)
+      game_cache = get_cache(@game.id)
 
-      @player_board = board_cache[@game.id][@user.id]
+      @player_board = game_cache[@user.id]
       opponent_id = @game.user_1_id != @user.id ? @game.user_1_id : @game.user_2_id
       @opponent_user = User.find(opponent_id)
-      @opponent_board = board_cache[@game.id][opponent_id]
+      @opponent_board = game_cache[opponent_id]
       @total_ships = Ship.count
     end
   end
@@ -43,7 +48,7 @@ class GameController < ApplicationController
 
     hit = tile.ship_exists?
     sunk = tile.ship_sunk?
-    
+
     if hit
       # Defined in ApplicationHelper
       if sunk && is_game_complete?(tile)  

@@ -2,40 +2,31 @@ module ApplicationHelper
 
   
   def get_cache(game_id)
-    board_cache = Rails.cache.fetch('board_cache')
-    if board_cache.nil?
-      board_cache = initialize_cache
-    end
-
-    if board_cache[game_id].nil?
+    game_cache = Rails.cache.fetch("game-#{game_id}")
+    if game_cache.nil?
       game = Game.find(game_id)
-      board_cache = add_to_cache(board_cache, game)
+      game_cache = add_to_cache(game)
     end
-    return board_cache
+    return game_cache
   end
   
-  def initialize_cache
-    board_cache = Hash.new
-    Rails.cache.write('board_cache', board_cache)
-    return board_cache
+  def add_to_cache(game)
+    game_cache = Hash.new
+    game_cache[game.user_1_id] = Board.load_game(game.id, game.user_1_id)
+    game_cache[game.user_2_id] = Board.load_game(game.id, game.user_2_id)
+    Rails.cache.write("game-#{game.id}", game_cache, :expires_in => 30.minutes)
+    return game_cache
   end
 
-  def add_to_cache(board_cache, game)
-    if board_cache.nil?
-      board_cache = initialize_cache
-    end
-
-    board_cache[game.id] = Hash.new
-    
-    board_cache[game.id][game.user_1_id] = Board.load_game(game.id, game.user_1_id)
-    board_cache[game.id][game.user_2_id] = Board.load_game(game.id, game.user_2_id)
-    Rails.cache.write('board_cache', board_cache)
-    return board_cache
+  def update_cache(board)
+    game_cache = Rails.cache.fetch("game-#{board.game_id}")
+    game_cache[board.user_id][board.x][board.y] = board
+    Rails.cache.write("game-#{board.game_id}", game_cache, :expires_in => 30.minutes)
   end
 
   def is_game_complete?(board)
-    board_cache = get_cache(board.game_id)
-    board = board_cache[board.game_id][board.user_id]
+    game_cache = get_cache(board.game_id)
+    board = game_cache[board.user_id]
 
     board.each do |rows|
       rows.each do |tile|

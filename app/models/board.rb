@@ -10,9 +10,8 @@ class Board < ActiveRecord::Base
     self.time_bombed = DateTime.now
     self.save
 
-    board_cache = Rails.cache.fetch('board_cache')
-    board_cache[self.game_id][self.user_id][self.x][self.y] = self
-    Rails.cache.write('board_cache', board_cache)
+    #defined in ApplicationHelper
+    update_cache(self)
   end
 
   def ship_exists?
@@ -24,8 +23,8 @@ class Board < ActiveRecord::Base
       return false
     end
 
-    board_cache = get_cache(self.game_id)
-    board = board_cache[self.game_id][self.user_id]
+    game_cache = get_cache(self.game_id)
+    board = game_cache[self.user_id]
 
     board.each do |rows|
       rows.each do |tile|
@@ -37,6 +36,7 @@ class Board < ActiveRecord::Base
 
     return true
   end
+
   def self.create_new_boards(game)
     if game.user_1_id.nil? || game.user_2_id.nil?
       raise "Game does not have both users ready"
@@ -44,17 +44,10 @@ class Board < ActiveRecord::Base
     if !game.has_started
       raise "Game hasn't started yet"
     end
-    
 
-    board_cache = Rails.cache.fetch('board_cache')
-    if board_cache.nil?
-      board_cache = Hash.new
-    end
-
-    board_cache[game.id] = Hash.new
-    board_cache[game.id][game.user_1_id] = self.create_board(game.id, game.user_1_id)
-    board_cache[game.id][game.user_2_id] = self.create_board(game.id, game.user_2_id)
-    Rails.cache.write('board_cache', board_cache)
+    self.create_board(game.id, game.user_1_id)
+    self.create_board(game.id, game.user_2_id)
+    ApplicationController.helpers.add_to_cache(game)
   end
 
   def self.load_game(game_id, user_id)
@@ -72,7 +65,6 @@ class Board < ActiveRecord::Base
     def self.create_board(game_id, user_id)
       board_array = self.create_empty_board_pieces(game_id,user_id)
       self.place_all_ships_to_board(board_array)
-      return board_array
     end
 
     def self.create_empty_board_pieces(game_id, user_id)
