@@ -1,4 +1,5 @@
 class Board < ActiveRecord::Base
+  include ApplicationHelper
   belongs_to :game
 
   MAX_ROWS = 10
@@ -18,6 +19,24 @@ class Board < ActiveRecord::Base
     return !self.ship_id.nil?
   end
 
+  def ship_sunk?
+    if !self.ship_exists?
+      return false
+    end
+
+    board_cache = get_cache(self.game_id)
+    board = board_cache[self.game_id][self.user_id]
+
+    board.each do |rows|
+      rows.each do |tile|
+        if tile.ship_exists? && self.ship_id == tile.ship_id && !tile.is_bombed
+          return false
+        end
+      end
+    end
+
+    return true
+  end
   def self.create_new_boards(game)
     if game.user_1_id.nil? || game.user_2_id.nil?
       raise "Game does not have both users ready"

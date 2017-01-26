@@ -5,17 +5,32 @@
 
 <% if !@game.has_started? %>
   <div>Waiting for player 2...</div>
-
 <% else %>
 
-  <div>You are playing against <b><%= @opponent_user.username%></b></div>
+  
+  <% if @game.is_over? %>
+    <div>Game Over</div>
+    <div><%= @user.id == @game.winner_id ? "You" : @game.winner.username %> won</div>
+  
+  <% else %> 
+    <div>You are playing against <b><%= @opponent_user.username%></b></div>
 
-  <% if @game.is_players_turn?(@user) %>
-    It is currently your turn, please select a location to launch missle.
+    <% if !@hit.nil? %>
+      <% if @hit %>
+        <div>HIT</div>
+        <% if @sunk %>
+          <div> AND SUNK </div>
+        <% end %>
+      <% else %>
+        <div>MISS</div>
+      <% end %>
+    <% end %>
+    <% if @game.is_players_turn?(@user) %>
+      It is currently your turn, please select a location to launch missle.
+    <% else %>
+      Waiting for opponent to fire missle...
 
-  <% else %>
-    Waiting for opponent to fire missle...
-
+    <% end %>
   <% end %>
 
   <br />
@@ -37,7 +52,7 @@
           </div>
         <% end %>
       <% else %>
-        <% if @game.is_players_turn?(@user) %>
+        <% if !@game.is_over? && @game.is_players_turn?(@user) %>
           <div class="clickable-box">
           <%= form_tag(game_fire_missile_path(:tile_id => tile.id), :method => "post") do %>
             <div class="box can-fire opponent-unknown" onclick="$(this).parent().submit()"></div>
@@ -85,10 +100,14 @@
 <% end %>
 
 <%= javascript_tag do %>
-<% if !@game.has_started? || !@game.is_players_turn?(@user) %>
-  setTimeout(function(){
+<% if !@game.is_over? && (!@game.has_started? || !@game.is_players_turn?(@user)) %>
+  var timer = setTimeout(function(){
     var url = "/game/index?game_id=<%= @game.id %>"
     window.location.href = url;
   }, 5000);
+
+  $( "#site-name" ).click(function() {
+    clearTimeout(timer);
+  });
 <% end %>
 <% end %>

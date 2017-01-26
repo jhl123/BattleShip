@@ -1,20 +1,41 @@
 <div id="user-login-bar">
   <%= form_tag(root_path, :method => "get", id: "user-login-form") do %>
-      <%= text_field_tag :username, params[:username], placeholder: "Enter new username", class: "user-login-box" %>
+      Login as a different user:
+      <%= text_field_tag :username, params[:username], placeholder: "Enter username", class: "user-login-box" %>
       <%= submit_tag "Login", :name => nil, class: "user-login-button" %>
   <% end %>
 </div>
 
-<h1>Welcome to Battleship 2.0</h1>
-
-<div>for user: <%= @user.username %></div>
+<div>In process games:
+  <ul>
+    <% @in_process_games.each do |game| %>
+      <li>vs <%= link_to game.get_opponent(@user.id).username, game_index_path(:game_id => game.id) %></li>
+    <% end %>
+  </ul>
+</div>
 
 <div>Available games:
   <ul>
     <% @available_games.each do |game| %>
-      <% if @user.id != game.user_1_id %>
       <li><%= link_to game.user_1.username, game_index_path(:game_id => game.id) %></li>
-      <% end %>
+    <% end %>
+  </ul>
+</div>
+
+<div>Completed games:
+  <ul>
+    <% @completed_games.each do |game| %>
+    <li>
+      <b><%= game.winner_id == @user.id ? "Won" : "Lost" %> </b>vs <%= link_to game.get_opponent(@user.id).username, game_index_path(:game_id => game.id) %>
+    </li>
+    <% end %>
+  </ul>
+</div>
+
+<div>Your unstarted games:
+  <ul>
+    <% @user_unstarted_games.each do |game| %>
+      <li><%= link_to "Game ##{game.id}", game_index_path(:game_id => game.id) %></li>
     <% end %>
   </ul>
 </div>

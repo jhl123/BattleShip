@@ -3,6 +3,8 @@ class GameController < ApplicationController
 
   def index
     @user = User.where(username: session[:username]).take
+    @hit = params[:hit] == "true"
+    @sunk = params[:sunk] == "true"
     if params[:game_id].nil?
       @game = Game.create(user_1_id: @user.id)
       params[:game_id] = @game.id
@@ -39,17 +41,19 @@ class GameController < ApplicationController
     tile.mark_as_bombed
     game = tile.game
 
-    if tile.ship_exists?
-      
+    hit = tile.ship_exists?
+    sunk = tile.ship_sunk?
+    
+    if hit
       # Defined in ApplicationHelper
-      if is_game_complete?(tile)  
+      if sunk && is_game_complete?(tile)  
         game.update_winner(@user)
       end
     else
       game.switch_to_next_players_turn
     end
 
-    redirect_to game_index_path(game_id: tile.game_id)
+    redirect_to game_index_path(game_id: tile.game_id, hit: hit, sunk: sunk)
   end
 
 end
