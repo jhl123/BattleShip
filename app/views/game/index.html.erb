@@ -1,8 +1,5 @@
 <%= javascript_include_tag "game" %>
 
-
-<div><b><%= @user.username %></b> playing </div>
-
 <% if !@game.has_started? %>
   <div>Waiting for player 2...</div>
 <% else %>
@@ -13,31 +10,38 @@
     <div><%= @user.id == @game.winner_id ? "You" : @game.winner.username %> won</div>
   
   <% else %> 
-    <div>You are playing against <b><%= @opponent_user.username%></b></div>
+    <div class="game-info">
+      <div class="game-text">You are playing against <b><%= @opponent_user.username%></b></div>
 
+      <div class="game-text">
+        <% if @game.is_players_turn?(@user) %>
+          Your turn, please select a location
+        <% else %>
+          <b><%= @opponent_user.username%></b>'s turn. Waiting...
+        <% end %>
+      </div>
+    </div>
+
+    <div class="status-box">
     <% if !@hit.nil? %>
       <% if @hit %>
-        <div>HIT</div>
+        <div class="hit-text">HIT
         <% if @sunk %>
-          <div> AND SUNK </div>
+          AND SUNK
         <% end %>
+
+        </div>
       <% else %>
-        <% puts "...........#{@hit}......." %>
-        <div>MISS</div>
+        <div class="miss-text">MISS</div>
       <% end %>
     <% end %>
-    <% if @game.is_players_turn?(@user) %>
-      It is currently your turn, please select a location to launch missle.
-    <% else %>
-      Waiting for opponent to fire missle...
-
-    <% end %>
+    </div>
   <% end %>
 
-  <br />
-
+  <div class="game-panel">
   <div class="game-board">
-  Opponent's board
+
+    <div class="board-text">Opponent's board</div>
   <% @opponent_board.each do |rows| %>
 
     <div class="tile-row">
@@ -71,7 +75,7 @@
 
 
   <div class="game-board">
-  Your board
+    <div class="board-text">Your board</div>
   <% @player_board.each do |rows| %>
     <div class="tile-row">
     <% rows.each do |tile| %>
@@ -94,7 +98,7 @@
   <% end %>
 
   </div>
-  
+  </div> 
 
 
 

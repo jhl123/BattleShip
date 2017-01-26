@@ -38,6 +38,12 @@
   background: #000099;
 }
 
+.game-info {
+  float: left;
+  height: 50px;
+  width: 300px;
+}
+
 .bombed {
   font-size: 47px;
   font-family: "Arial Black";
@@ -45,12 +51,41 @@
   padding-left: 6px;
 }
 
+.board-text {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.game-text {
+  font-size: 20px;
+  font-family: "Calibri";
+}
+.status-box {
+  height: 50px;
+  float: left;
+  margin-left: 50px;
+}
+
+.miss-text {
+  color: #444444;
+  font-size: 50px;
+}
+
+.game-panel {
+  clear: left;
+  padding-top: 30px;
+}
+.hit-text {
+  color: #FF0000;
+  font-size: 50px;
+}
+
 .water-bombed {
-  color: #D9D9D9
+  color: #D9D9D9;
 }
 
 .ship-bombed {
-  color: #FF0000
+  color: #FF0000;
 }
 
 .water {
