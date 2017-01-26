@@ -1,28 +1,23 @@
-== README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Before starting the server, we want to create a db and load it with the relevant info
 
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+To create db, run
+
+  rake db:migrate
+
+
+To load db on the 5 ships to create, run
+
+  rake populate_db:create_ships
+
+
+Then we simply run
+
+  rails server
+
+To access the site, go to:
+
+  http://localhost:3000/
+
+
+By default, you'll be logged in under username: "guest". To create a new username or login under an existing username, enter it in the box
