@@ -28,7 +28,6 @@ module ApplicationHelper
   end
 
   def get_last_move(user_id)
-    puts "fetched..for: #{user_id}: #{Rails.cache.fetch("last-move-user-#{user_id}").id}"
     return Rails.cache.fetch("last-move-user-#{user_id}")
   end
   def is_game_complete?(board)

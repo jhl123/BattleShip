@@ -1,12 +1,11 @@
 Before starting the server, we want to create a db and load it with the relevant info
 
-
 To create db, run
 
   rake db:migrate
 
 
-To load db on the 5 ships to create, run
+Then run the following in order to load db on the 5 ships to create
 
   rake populate_db:create_ships
 
@@ -19,7 +18,50 @@ To access the site, go to:
 
   http://localhost:3000/
 
+A demo version can be played at:
+
+  https://battleship-justin.herokuapp.com
 
 By default, you'll be logged in under username: "guest". To create a new username or login under an existing username, enter it in the box in the main page.
 
-To play against yourself on the same computer, use 2 different browsers or open an in-cognito tab on one browser
+To play against yourself on the same computer, use 2 different browsers or open an in-cognito tab on one browser.
+
+Some Designs Notes:
+- I used sql for a simple db to store the game data so it could be reloaded even if the server were to restart.
+
+- I used caching to store game data (30 minute expiration) so the calls to db can be minimal
+
+- The webpage refreshes every 5 seconds if the player is waiting on the other player, probably could've done sockets but this is the fastest and most straight-foward implementation
+
+- The colored marker indicates the most recently placed markers
+
+- On the main page a player can view
+  - Games that's been completed
+  - Games in progress
+  - Games that's availaible to join (created by another player)
+  - Games that was created by the player but no other player has joined
+
+Below is the db_schema
+
+User
+  username
+
+Game
+  user_1
+  user_2
+  winner
+  next_turn_user
+  has_started
+
+board
+  game_id
+  user_id
+  x
+  y
+  ship_id
+  is_bombed
+  time_bombed
+
+ship
+  name
+  length
