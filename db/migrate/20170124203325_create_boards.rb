@@ -3,8 +3,8 @@ class CreateBoards < ActiveRecord::Migration
     create_table :boards do |t|
       t.belongs_to :game
       t.belongs_to :user
-      t.string :x
-      t.string :y
+      t.integer :x
+      t.integer :y
       t.belongs_to :ship
       t.boolean :is_bombed
       t.datetime :time_bombed

@@ -11,13 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170124221950) do
+ActiveRecord::Schema.define(version: 20170124220950) do
 
   create_table "boards", force: true do |t|
     t.integer  "game_id"
     t.integer  "user_id"
-    t.integer  "x",           limit: 255
-    t.integer  "y",           limit: 255
+    t.integer  "x"
+    t.integer  "y"
     t.integer  "ship_id"
     t.boolean  "is_bombed"
     t.datetime "time_bombed"
