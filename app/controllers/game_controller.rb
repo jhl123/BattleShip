@@ -40,17 +40,22 @@ class GameController < ApplicationController
       @opponent_board = game_cache[@opponent_user.id]
       @total_ships = Ship.count
       @last_move = Hash.new
-      @last_move[@user.id] = ApplicationController.helpers.get_last_move(@user.id)
-      @last_move[@opponent_user.id] = ApplicationController.helpers.get_last_move(@opponent_user.id)
+      @last_move[@user.id] = ApplicationController.helpers.get_last_move(@game.id, @user.id)
+      @last_move[@opponent_user.id] = ApplicationController.helpers.get_last_move(@game.id, @opponent_user.id)
     end
   end
 
   def fire_missile
     @user = User.where(username: session[:username]).take
     tile = Board.find(params[:tile_id])
-    tile.mark_as_bombed
     game = tile.game
+    
+    if game.next_turn_user_id != @user.id
+      redirect_to game_index_path(game_id: tile.game_id)
+      return
+    end
 
+    tile.mark_as_bombed
     hit = tile.ship_exists?
     sunk = tile.ship_sunk?
 
